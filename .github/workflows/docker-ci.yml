@@ -23,8 +23,8 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-
-            - name: Run dependency vulnerability scan (npm audit)
+     
+      - name: Run dependency vulnerability scan (npm audit)
         run: |
           npm audit --audit-level=high || true
           npm audit --json > reports/npm-audit.json
