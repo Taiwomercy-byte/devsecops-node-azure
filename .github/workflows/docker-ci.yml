@@ -13,6 +13,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+ 
+      - name: Run dependency vulnerability scan 
+        run: npm audit --audit-level=high
+
       - name: Build Docker image
-        run: |
-          docker build -t devsecops-node-api:ci .
+        run: docker build -t devsecops-node-api:ci .
+
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: devsecops-node-api:ci
+          format: table
+          exit-code: 1
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
