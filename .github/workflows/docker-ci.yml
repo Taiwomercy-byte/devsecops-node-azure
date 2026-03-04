@@ -18,16 +18,23 @@ jobs:
         with:
           node-version: 20
 
-      - name: create reports directory
-        run:  mkdir -p reports
+            steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Create reports directory
+        run: mkdir -p reports
 
       - name: Install dependencies
         run: npm install
-     
-      - name: Run dependency vulnerability scan (npm audit)
-        run: |
-          npm audit --audit-level=high || true
-          npm audit --json > reports/npm-audit.json
+        
+      - name: Run dependency vulnerability scan 
+        run: npm audit --audit-level=high
 
       - name: Build Docker image
         run: docker build -t devsecops-node-api:ci .
@@ -42,6 +49,9 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
+
+      - name: List reports directory
+        run: ls -la reports
 
       - name: Upload security reports
         uses: actions/upload-artifact@v4
